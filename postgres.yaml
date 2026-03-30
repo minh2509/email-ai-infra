@@ -20,11 +20,11 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: email_ai
+              value: "email_ai"
             - name: POSTGRES_USER
-              value: admin
+              value: "admin"
             - name: POSTGRES_PASSWORD
-              value: 123456
+              value: "123456"
 
 ---
 apiVersion: v1
