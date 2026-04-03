@@ -33,9 +33,10 @@ metadata:
   name: postgres-service
   namespace: database
 spec:
-  type: ClusterIP
+  type: NodePort          # <--- ĐỔI TỪ ClusterIP SANG NodePort
   selector:
     app: postgres
   ports:
     - port: 5432
       targetPort: 5432
+      nodePort: 30432     # <--- THÊM DÒNG NÀY, chọn cổng từ 30000-32767
