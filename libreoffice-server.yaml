@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: libreoffice-server
+  namespace: middleware
+  labels:
+    app: libreoffice-server
+    component: document-converter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: libreoffice-server
+  template:
+    metadata:
+      labels:
+        app: libreoffice-server
+    spec:
+      containers:
+      - name: libreoffice
+        image: ghcr.io/unoconv/unoserver-docker:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 2004
+          name: unoserver
+          protocol: TCP
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+        livenessProbe:
+          tcpSocket:
+            port: 2004
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 2004
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: libreoffice-server
+  namespace: middleware
+  labels:
+    app: libreoffice-server
+spec:
+  type: ClusterIP
+  selector:
+    app: libreoffice-server
+  ports:
+  - name: unoserver
+    port: 33101
+    targetPort: 2004
+    protocol: TCP
