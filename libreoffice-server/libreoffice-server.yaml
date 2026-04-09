@@ -17,16 +17,17 @@ spec:
     spec:
       containers:
       - name: libreoffice
-        image: docker.io/unoserver/unoserver:latest
-        imagePullPolicy: Always
+        image: ghcr.io/unoconv/unoserver-docker:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            unoserver --host 0.0.0.0 --port 5000 &
+            sleep 5
+            echo "LibreOffice server started on port 5000"
+            tail -f /dev/null
         ports:
         - containerPort: 5000
-          name: http
-        env:
-        - name: UNOSERVER_HOST
-          value: "0.0.0.0"
-        - name: UNOSERVER_PORT
-          value: "5000"
+          name: unoserver
         resources:
           limits:
             memory: "2Gi"
@@ -47,7 +48,7 @@ spec:
   selector:
     app: libreoffice-server
   ports:
-  - name: http
+  - name: unoserver
     port: 33101
     targetPort: 5000
     protocol: TCP
