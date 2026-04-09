@@ -17,14 +17,18 @@ spec:
     spec:
       containers:
       - name: libreoffice
-        image: leplusorg/libreoffice-rest:latest
-        imagePullPolicy: Always
+        image: ghcr.io/unoconv/unoserver-docker:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            echo "Starting LibreOffice server..."
+            unoserver &
+            sleep 5
+            echo "LibreOffice server ready on port 2002"
+            tail -f /dev/null
         ports:
-        - containerPort: 8080
-          name: http
-        env:
-        - name: REST_API_PORT
-          value: "8080"
+        - containerPort: 2002
+          name: unoserver
         resources:
           limits:
             memory: "2Gi"
@@ -45,7 +49,7 @@ spec:
   selector:
     app: libreoffice-server
   ports:
-  - name: http
+  - name: unoserver
     port: 33101
-    targetPort: 8080
+    targetPort: 2002
     protocol: TCP
