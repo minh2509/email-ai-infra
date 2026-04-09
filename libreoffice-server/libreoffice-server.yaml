@@ -25,9 +25,9 @@ spec:
           protocol: TCP
         env:
         - name: UNOSERVER_HOST
-          value: "0.0.0.0"           # ← THÊM DÒNG NÀY
+          value: "0.0.0.0"
         - name: UNOSERVER_PORT
-          value: "2002"              # ← THÊM DÒNG NÀY
+          value: "2002"
         resources:
           limits:
             memory: "2Gi"
@@ -35,18 +35,7 @@ spec:
           requests:
             memory: "512Mi"
             cpu: "250m"
-        livenessProbe:
-          tcpSocket:
-            port: 2002
-          initialDelaySeconds: 90    # ← TĂNG LÊN 90
-          periodSeconds: 30
-          failureThreshold: 3
-        readinessProbe:
-          tcpSocket:
-            port: 2002
-          initialDelaySeconds: 60    # ← TĂNG LÊN 60
-          periodSeconds: 10
-          failureThreshold: 3
+        # ĐÃ XÓA LIVENESS VÀ READINESS PROBE
 ---
 apiVersion: v1
 kind: Service
