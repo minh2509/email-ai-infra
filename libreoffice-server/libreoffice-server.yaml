@@ -5,7 +5,6 @@ metadata:
   namespace: middleware
   labels:
     app: libreoffice-server
-    component: document-converter
 spec:
   replicas: 1
   selector:
@@ -23,7 +22,6 @@ spec:
         ports:
         - containerPort: 2004
           name: unoserver
-          protocol: TCP
         resources:
           limits:
             memory: "2Gi"
@@ -31,18 +29,6 @@ spec:
           requests:
             memory: "512Mi"
             cpu: "250m"
-        livenessProbe:
-          tcpSocket:
-            port: 2004
-          initialDelaySeconds: 60
-          periodSeconds: 30
-          timeoutSeconds: 10
-        readinessProbe:
-          tcpSocket:
-            port: 2004
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
 ---
 apiVersion: v1
 kind: Service
@@ -56,7 +42,6 @@ spec:
   selector:
     app: libreoffice-server
   ports:
-  - name: unoserver
-    port: 33101
+  - port: 33101
     targetPort: 2004
     protocol: TCP
