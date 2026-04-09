@@ -1,0 +1,35 @@
+# Environment variables cho n8n
+env:
+  N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+  NODE_FUNCTION_ALLOW_EXTERNAL: "*"
+  N8N_ALLOW_FS_ACCESS: "true"
+
+# Các cấu hình khác giữ nguyên
+externalPostgresql:
+  host: "10.0.0.2"
+  password: "n8n@2o26"
+  username: "n8n"
+
+db:
+  type: "postgresdb"
+
+binaryData:
+  mode: "filesystem"
+
+redis:
+  enabled: true
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: "n8n.71ai.vn"
+      paths:
+        - path: "/"
+          pathType: "Prefix"
+  tls:
+    - secretName: "n8n-tls-certs"
+      hosts:
+        - "n8n.71ai.vn"
