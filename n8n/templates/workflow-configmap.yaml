@@ -6,8 +6,8 @@ metadata:
 data:
   email-ai-processor.json: |
     {
-      "name": "EMAIL AI BI lastest",
-      "nodes": [
+  "name": "EMAIL AI BI lastest",
+  "nodes": [
     {
       "parameters": {
         "format": "resolved",
