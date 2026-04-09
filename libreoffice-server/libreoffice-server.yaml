@@ -17,11 +17,14 @@ spec:
     spec:
       containers:
       - name: libreoffice
-        image: zrrrzzt/docker-unoconv:latest
+        image: leplusorg/libreoffice-rest:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 3000
+        - containerPort: 8080
           name: http
+        env:
+        - name: REST_API_PORT
+          value: "8080"
         resources:
           limits:
             memory: "2Gi"
@@ -44,5 +47,5 @@ spec:
   ports:
   - name: http
     port: 33101
-    targetPort: 3000
+    targetPort: 8080
     protocol: TCP
