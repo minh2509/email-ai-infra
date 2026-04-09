@@ -17,11 +17,16 @@ spec:
     spec:
       containers:
       - name: libreoffice
-        image: ghcr.io/eb4ani/unoserver-rest:latest
+        image: docker.io/unoserver/unoserver:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
           name: http
+        env:
+        - name: UNOSERVER_HOST
+          value: "0.0.0.0"
+        - name: UNOSERVER_PORT
+          value: "5000"
         resources:
           limits:
             memory: "2Gi"
