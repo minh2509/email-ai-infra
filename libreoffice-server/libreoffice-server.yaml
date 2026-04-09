@@ -21,9 +21,20 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
           - |
-            unoserver --interface 0.0.0.0 --port 5000 &
-            sleep 5
-            echo "LibreOffice server started on port 5000"
+            # Cài đặt socat
+            apt-get update && apt-get install -y socat || true
+            
+            # Khởi động unoserver với LibreOffice
+            unoserver &
+            
+            # Đợi LibreOffice khởi động
+            sleep 10
+            
+            # Forward port 5000 → 2002
+            echo "Forwarding port 5000 to 2002..."
+            socat TCP-LISTEN:5000,fork,reuseaddr TCP:127.0.0.1:2002 &
+            
+            echo "Server ready! Port 5000 forwarded to LibreOffice on 2002"
             tail -f /dev/null
         ports:
         - containerPort: 5000
