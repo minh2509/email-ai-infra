@@ -17,17 +17,11 @@ spec:
     spec:
       containers:
       - name: libreoffice
-        image: ghcr.io/unoconv/unoserver-docker:latest
+        image: ghcr.io/eb4ani/unoserver-rest:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 2002
-          name: unoserver
-          protocol: TCP
-        env:
-        - name: UNOSERVER_HOST
-          value: "0.0.0.0"
-        - name: UNOSERVER_PORT
-          value: "2002"
+        - containerPort: 5000
+          name: http
         resources:
           limits:
             memory: "2Gi"
@@ -35,7 +29,6 @@ spec:
           requests:
             memory: "512Mi"
             cpu: "250m"
-        # ĐÃ XÓA LIVENESS VÀ READINESS PROBE
 ---
 apiVersion: v1
 kind: Service
@@ -49,7 +42,7 @@ spec:
   selector:
     app: libreoffice-server
   ports:
-  - name: unoserver
+  - name: http
     port: 33101
-    targetPort: 2002
+    targetPort: 5000
     protocol: TCP
