@@ -20,12 +20,9 @@ spec:
         image: ghcr.io/unoconv/unoserver-docker:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 2002    # ← Sửa từ 2004 thành 2002
+        - containerPort: 2002
           name: unoserver
           protocol: TCP
-        env:
-        - name: UNOSERVER_PORT
-          value: "2002"
         resources:
           limits:
             memory: "2Gi"
@@ -35,12 +32,12 @@ spec:
             cpu: "250m"
         livenessProbe:
           tcpSocket:
-            port: 2002           # ← Sửa từ 2004 thành 2002
+            port: 2002
           initialDelaySeconds: 60
           periodSeconds: 30
         readinessProbe:
           tcpSocket:
-            port: 2002           # ← Sửa từ 2004 thành 2002
+            port: 2002
           initialDelaySeconds: 30
           periodSeconds: 10
 ---
@@ -58,5 +55,5 @@ spec:
   ports:
   - name: unoserver
     port: 33101
-    targetPort: 2002           # ← Sửa từ 2004 thành 2002
+    targetPort: 2002
     protocol: TCP
