@@ -19,18 +19,18 @@ spec:
               sleep 15
               
               echo ""
-              echo "=== Step 1: Login to n8n ==="
+              echo "=== Step 1: Login to n8n via HTTPS ==="
               curl -X POST \
-                "http://n8n.middleware.svc.cluster.local:5678/rest/login" \
+                "https://n8n.71ai.vn/rest/login" \
                 -H "Content-Type: application/json" \
                 -d "{\"emailOrLdapLoginId\":\"${N8N_USERNAME}\",\"password\":\"${N8N_PASSWORD}\"}" \
                 -c /tmp/cookies.txt \
                 -v
               
               echo ""
-              echo "=== Step 2: Import workflow ==="
+              echo "=== Step 2: Import workflow via HTTPS ==="
               curl -X POST \
-                "http://n8n.middleware.svc.cluster.local:5678/rest/workflows" \
+                "https://n8n.71ai.vn/rest/workflows" \
                 -H "Content-Type: application/json" \
                 -b /tmp/cookies.txt \
                 -d "@/workflows/email-ai-processor.json" \
