@@ -1,0 +1,15 @@
+# n8n/helm/values-workflow.yaml
+persistence:
+  enabled: true
+  size: 1Gi
+
+# Mount ConfigMap chứa workflows
+extraVolumeMounts:
+  - name: workflows
+    mountPath: /home/node/.n8n/workflows
+    readOnly: true
+
+extraVolumes:
+  - name: workflows
+    configMap:
+      name: n8n-workflows
