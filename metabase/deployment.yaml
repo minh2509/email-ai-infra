@@ -39,13 +39,13 @@ spec:
             - name: JAVA_TIMEZONE
               value: "Asia/Ho_Chi_Minh"
             - name: JAVA_TOOL_OPTIONS
-              value: "-Xmx512m -Xms256m -XX:+UseG1GC -XX:MaxRAMPercentage=75.0"
+              value: "-Xmx1024m -Xms512m -XX:+UseG1GC"
           resources:
             requests:
-              memory: "256Mi"
+              memory: "512Mi"
               cpu: "100m"
             limits:
-              memory: "768Mi"
+              memory: "1536Mi"      # Tăng từ 768Mi lên 1.5GB
               cpu: "500m"
           livenessProbe:
             httpGet:
@@ -59,7 +59,7 @@ spec:
             httpGet:
               path: /api/health
               port: 3000
-            initialDelaySeconds: 120
+            initialDelaySeconds: 180
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 30
