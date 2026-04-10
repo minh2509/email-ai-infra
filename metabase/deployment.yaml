@@ -22,7 +22,6 @@ spec:
             - containerPort: 3000
               name: http
           env:
-            # Kết nối đến database email_ai
             - name: MB_DB_TYPE
               value: "postgres"
             - name: MB_DB_HOST
@@ -37,28 +36,32 @@ spec:
               value: "123456"
             - name: MB_DB_SSL
               value: "false"
-            # Timezone
             - name: JAVA_TIMEZONE
               value: "Asia/Ho_Chi_Minh"
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Xmx1536m -Xms1024m"
+            - name: JAVA_OPTS
+              value: "-Xmx1536m -Xms1024m"
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "250m"
-            limits:
-              memory: "1Gi"
+              memory: "1536Mi"
               cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
           livenessProbe:
             httpGet:
               path: /api/health
               port: 3000
-            initialDelaySeconds: 120
+            initialDelaySeconds: 240
             periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 6
+            failureThreshold: 12
           readinessProbe:
             httpGet:
               path: /api/health
               port: 3000
-            initialDelaySeconds: 30
+            initialDelaySeconds: 90
             periodSeconds: 5
             timeoutSeconds: 3
+            failureThreshold: 20
