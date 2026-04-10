@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metabase
+  namespace: middleware
+  labels:
+    app: metabase
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metabase
+  template:
+    metadata:
+      labels:
+        app: metabase
+    spec:
+      containers:
+        - name: metabase
+          image: metabase/metabase:v0.55.4
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            # Kết nối đến database email_ai
+            - name: MB_DB_TYPE
+              value: "postgres"
+            - name: MB_DB_HOST
+              value: "postgres-service.database.svc.cluster.local"
+            - name: MB_DB_PORT
+              value: "5432"
+            - name: MB_DB_DBNAME
+              value: "email_ai"
+            - name: MB_DB_USER
+              value: "admin"
+            - name: MB_DB_PASS
+              value: "123456"
+            - name: MB_DB_SSL
+              value: "false"
+            # Timezone
+            - name: JAVA_TIMEZONE
+              value: "Asia/Ho_Chi_Minh"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 3
