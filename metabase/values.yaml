@@ -1,0 +1,84 @@
+# metabase/values.yaml
+
+replicaCount: 1
+
+image:
+  repository: metabase/metabase
+  tag: v0.55.4
+  pullPolicy: IfNotPresent
+
+# Kết nối đến PostgreSQL của bạn
+database:
+  type: postgres
+  host: "postgres-service.database.svc.cluster.local"
+  port: "5432"
+  dbname: "email_ai"
+  username: "admin"
+  password: "123456"
+
+# Database riêng cho Metabase lưu cấu hình
+# Metabase sẽ tự tạo schema riêng trong database email_ai
+metabaseDatabase:
+  type: postgres
+  host: "postgres-service.database.svc.cluster.local"
+  port: "5432"
+  dbname: "email_ai"
+  username: "admin"
+  password: "123456"
+
+# Service
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+# Ingress với HTTPS
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: metabase.71ai.vn
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: metabase-tls-certs
+      hosts:
+        - metabase.71ai.vn
+
+# Persistent storage - không cần vì dùng external Postgres
+persistence:
+  enabled: false
+
+# Resources
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+# Timezone Việt Nam
+timeZone: Asia/Ho_Chi_Minh
+
+# Health checks
+livenessProbe:
+  path: /api/health
+  initialDelaySeconds: 120
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+
+readinessProbe:
+  path: /api/health
+  initialDelaySeconds: 30
+  periodSeconds: 5
+  timeoutSeconds: 3
+
+# Environment variables bổ sung
+env:
+  MB_DB_CONNECTION_URI: "postgres://admin:123456@postgres-service.database.svc.cluster.local:5432/email_ai"
+  MB_DB_SSL: "false"
