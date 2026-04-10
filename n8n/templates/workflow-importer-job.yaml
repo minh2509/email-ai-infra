@@ -18,14 +18,19 @@ spec:
               echo "Waiting for n8n to be ready..."
               sleep 15
               
-              echo "Importing workflow via n8n API..."
+              echo "Testing API connection..."
+              curl -X GET \
+                "http://n8n.middleware.svc.cluster.local:5678/rest/workflows" \
+                -H "X-N8N-API-KEY: $N8N_API_KEY" \
+                -v
+              
+              echo ""
+              echo "Importing workflow..."
               curl -X POST \
                 "http://n8n.middleware.svc.cluster.local:5678/rest/workflows" \
                 -H "Content-Type: application/json" \
-                -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
+                -H "X-N8N-API-KEY: $N8N_API_KEY" \
                 -d "@/workflows/email-ai-processor.json"
-              
-              echo "Done!"
           volumeMounts:
             - name: workflows
               mountPath: /workflows
