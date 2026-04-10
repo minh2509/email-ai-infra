@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: n8n-workflow-importer
+  namespace: middleware
+spec:
+  ttlSecondsAfterFinished: 60
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: importer
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for n8n to be ready..."
+              sleep 15
+              
+              echo "Importing workflow via n8n API..."
+              curl -X POST \
+                "http://n8n.middleware.svc.cluster.local:5678/rest/workflows" \
+                -H "Content-Type: application/json" \
+                -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
+                -d "@/workflows/email-ai-processor.json"
+              
+              echo "Done!"
+          volumeMounts:
+            - name: workflows
+              mountPath: /workflows
+              readOnly: true
+          env:
+            - name: N8N_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-api-key
+                  key: api-key
+      volumes:
+        - name: workflows
+          configMap:
+            name: n8n-workflows
