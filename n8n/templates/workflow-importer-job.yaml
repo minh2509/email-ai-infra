@@ -4,7 +4,7 @@ metadata:
   name: n8n-workflow-importer
   namespace: middleware
 spec:
-  ttlSecondsAfterFinished: 60
+  ttlSecondsAfterFinished: 120
   template:
     spec:
       restartPolicy: Never
@@ -18,21 +18,34 @@ spec:
               echo "Waiting for n8n to be ready..."
               sleep 15
               
-              echo "Testing API connection with Basic Auth..."
-              curl -X GET \
-                "http://n8n.middleware.svc.cluster.local:5678/rest/workflows" \
-                -u "${N8N_USERNAME}:${N8N_PASSWORD}"
+              echo ""
+              echo "=== Test 1: Check if n8n is alive ==="
+              curl -X GET "http://n8n.middleware.svc.cluster.local:5678/healthz" -v
               
               echo ""
-              echo "Importing workflow..."
-              curl -X POST \
-                "http://n8n.middleware.svc.cluster.local:5678/rest/workflows" \
-                -u "${N8N_USERNAME}:${N8N_PASSWORD}" \
+              echo "=== Test 2: Try to get settings (no auth) ==="
+              curl -X GET "http://n8n.middleware.svc.cluster.local:5678/rest/settings" -v
+              
+              echo ""
+              echo "=== Test 3: Try Basic Auth with /rest/login ==="
+              curl -X POST "http://n8n.middleware.svc.cluster.local:5678/rest/login" \
                 -H "Content-Type: application/json" \
-                -d "@/workflows/email-ai-processor.json"
+                -d "{\"email\":\"${N8N_USERNAME}\",\"password\":\"${N8N_PASSWORD}\"}" \
+                -v
               
               echo ""
-              echo "Done!"
+              echo "=== Test 4: If login works, get workflows with cookie ==="
+              # Lưu cookie từ login
+              curl -X POST "http://n8n.middleware.svc.cluster.local:5678/rest/login" \
+                -H "Content-Type: application/json" \
+                -d "{\"email\":\"${N8N_USERNAME}\",\"password\":\"${N8N_PASSWORD}\"}" \
+                -c /tmp/cookies.txt
+              
+              echo ""
+              echo "Getting workflows with session cookie..."
+              curl -X GET "http://n8n.middleware.svc.cluster.local:5678/rest/workflows" \
+                -b /tmp/cookies.txt \
+                -v
           volumeMounts:
             - name: workflows
               mountPath: /workflows
