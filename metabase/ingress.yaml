@@ -1,1 +1,24 @@
-
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: metabase
+  namespace: middleware
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  rules:
+    - host: metabase.71ai.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: metabase
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - metabase.71ai.vn
+      secretName: metabase-tls-certs
